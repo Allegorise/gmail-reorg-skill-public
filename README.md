@@ -1,57 +1,62 @@
-# Gmail třídicí skill (Uživatel)
+# Gmail Inbox Sorting Skill
 
-> ⚠️ **Anonymizovaná verze.** Konkrétní osobní adresy, jména a firmy jsou nahrazeny zástupnými (`vas-ucet`, `kontakt-pravnik`, `vase-firma`…). Při použití si doplň vlastní seznamy odesílatelů a whitelist.
+A portable **skill for an AI agent** (Claude / ChatGPT / Grok) that sorts a Gmail inbox into
+stable categories by explicit rules — separating important mail from marketing, security noise
+and receipts, and keeping it that way with filters. Built from a real cleanup that took an
+inbox from **~21,000 to ~300** messages.
 
-Přenosný **skill pro AI agenta** (Claude / ChatGPT / Grok), který vytřídí Gmail do stálých
-kategorií podle konkrétních pravidel — oddělí důležitou poštu od reklamy, bezpečnostního šumu
-a účtenek, a udrží to filtry i do budoucna. Vznikl reálnou reorganizací schránky
-(inbox **~21 000 → ~300** zpráv).
+> ⚠️ **Anonymized example.** Specific personal addresses, names and company domains are replaced
+> with placeholders (`your-account`, `contact-lawyer`, `your-company`…). When you use it, fill in
+> your own sender lists and human whitelist.
 
-## Co v repu je
+## What's in the repo
 
-| Soubor | Co to je |
+| File | What it is |
 |---|---|
-| **[GMAIL_REORG_SKILL.md](GMAIL_REORG_SKILL.md)** | **Skill** = hotová pravidla k aplikaci (schéma štítků, seznamy odesílatelů, klíčovky, priorita, pojistka). Tohle dáš agentovi. |
-| **[HANDOFF.md](HANDOFF.md)** | Handoff / rozhodnutí · otevřené body · TODO (kontext a stav reorganizace). |
-| **[addon/](addon/)** | Gmail add-on (Google Apps Script) na 1-klik archivaci do `7 Archive/Personal` + návod nasazení. |
+| **[SKILL.md](SKILL.md)** | **The skill** — ready-to-apply rules (label scheme, sender lists, keywords, priority, safety guard). This is what you give the agent. |
+| **[BACKGROUND.md](BACKGROUND.md)** | Decisions · open items · TODO (context and state of the reorganization). |
+| **[addon/](addon/)** | A Gmail add-on (Google Apps Script) for one-click archiving to `7 Archive/Personal`, plus a deployment guide. |
 
-## Jak to použít
+## How to use it
 
-### A) S agentem, co umí volat Gmail API (Claude Code / vlastní skript)
-1. Agentovi dej do kontextu **`GMAIL_REORG_SKILL.md`** (+ volitelně `HANDOFF.md`).
-2. Zajisti **OAuth přístup** ke schránce (refresh token, scopes `gmail.modify` +
-   `gmail.settings.basic`). Token **NENÍ** v tomto repu — drž ho mimo (viz `.gitignore`).
-3. Řekni agentovi, co chceš (audit / vytřídit / „tenhle e-mail do Shopping"). Agent podle pravidel
-   přesune existující poštu a založí filtry pro budoucí.
+### A) With an agent that can call the Gmail API (Claude Code / your own script)
+1. Put **`SKILL.md`** in the agent's context (optionally also `BACKGROUND.md`).
+2. Give it **OAuth access** to the mailbox (a refresh token, scopes `gmail.modify` +
+   `gmail.settings.basic`). The token is **not** in this repo — keep it outside it (see `.gitignore`).
+3. Tell the agent what you want (audit / sort / "put this email into Shopping"). It moves the
+   existing mail per the rules and creates filters for future mail.
 
-### B) Jako referenční playbook pro jakéhokoli agenta
-I bez API se dá skill použít jako **přesný návod**, jak schránku třídit (schéma, pravidla, priorita).
+### B) As a reference playbook for any agent
+Even without API access the skill works as a **precise manual** for how to sort the mailbox
+(scheme, rules, priority).
 
-### Formát štítků
+### Label scheme
 ```
-1 Important (= hvězdička) · 2 Security (/Codes /Alerts) · 3 Reading · 4 Shopping · 5 Junk
+1 Important (= star) · 2 Security (/Codes /Alerts) · 3 Reading · 4 Shopping · 5 Junk
 6 Other (/SaaS /Finance /Crypto /Government /Insurance) · 7 Archive (/Personal /Shopping …)
 ```
 
-## Bezpečnostní zásady (jsou v skillu)
+## Safety principles (built into the skill)
 
-- **Měř → ukaž vzorek → přesuň** (u velkých dávek). 
-- „Smaž" = **koš** (vratné 30 dní), ne natvrdo.
-- **Pojistka:** urgentní (upomínka/splatnost/platba neprošla) zůstává v inboxu.
-- **Nikdy nesahat** na účetní forward (filtr #58 → ucetni@vase-firma.cz).
-- **Žádné tokeny v repu.** `.env*` je v `.gitignore`.
+- **Measure → show a sample → move** (for large batches).
+- "Delete" = **Trash** (reversible 30 days), never a hard delete.
+- **Safety guard:** urgent mail (overdue / due / failed payment) stays in the inbox.
+- **Never touch** a critical accounting-forward filter, if one exists.
+- **No tokens in the repo.** `.env*` is in `.gitignore`.
 
-## Gmail add-on (volitelné)
+## Gmail add-on (optional)
 
-Ve `addon/` je malý Apps Script add-on, který přidá tlačítko **📁 → 7 Archive/Personal**
-(1-klik archivace). Nasazení: `addon/NASAZENI.md`. Pozn.: add-on žije v bočním panelu Gmailu
-(ne v horní liště) a po akci e-mail nezavře — to je limit Apps Script add-onů.
+`addon/` contains a small Apps Script add-on that adds a button **📁 → 7 Archive/Personal**
+(one-click archive). Deployment: `addon/DEPLOYMENT.md`. Note: the add-on lives in Gmail's side
+panel (not the top toolbar) and does not close the open email after the action — a limitation of
+Apps Script add-ons.
 
-## Omezení / stav
+## Limitations / status
 
-- Priorita (dvoj-štítky) je jednorázová — u nové pošty se může štítek zdvojit; řeš přečištěním
-  nebo výlučnými sekcemi Multiple Inboxes.
-- Seznamy odesílatelů rostou podle toho, jak uživatel flaguje poštu (každý flag = nové pravidlo).
+- Priority (dual-label) dedup is one-off — new mail can get a double label again; re-run the
+  dedup periodically or use mutually-exclusive Multiple Inboxes section queries.
+- Sender lists grow as the user flags mail (every flag becomes a new rule).
 
 ---
-*Osobní nástroj. Pravidla jsou šitá na konkrétní schránku; pro jinou si uprav seznamy odesílatelů a whitelist.*
+*Personal tool. The rules are tailored to one specific mailbox; for another mailbox, swap in your
+own sender lists and whitelist.*

@@ -1,13 +1,13 @@
 /**
  * Gmail add-on: one-click "Move to 7 Archive/Personal".
- * Zobrazí tlačítko v postranním panelu otevřeného e-mailu.
- * Klik = přidá štítek "7 Archive/Personal" + vyndá z inboxu (archivuje).
+ * Shows a button in the side panel of an open email.
+ * Click = adds the "7 Archive/Personal" label + removes it from the inbox (archives).
  */
 
-// Název cílového štítku – kdyby sis ho přejmenovala, uprav jen tady:
+// Target label name — if you rename it, change it only here:
 var TARGET_LABEL = '7 Archive/Personal';
 
-/** Sestaví kartu s tlačítkem, když otevřeš e-mail. */
+/** Builds the card with the button when you open an email. */
 function onGmailMessageOpen(e) {
   var btn = CardService.newTextButton()
     .setText('📁  → ' + TARGET_LABEL)
@@ -21,12 +21,12 @@ function onGmailMessageOpen(e) {
   var section = CardService.newCardSection().addWidget(btn);
 
   return CardService.newCardBuilder()
-    .setHeader(CardService.newCardHeader().setTitle('Rychlá archivace'))
+    .setHeader(CardService.newCardHeader().setTitle('Quick archive'))
     .addSection(section)
     .build();
 }
 
-/** Přidá štítek a archivuje (vyndá z inboxu). */
+/** Adds the label and archives (removes from inbox). */
 function moveToArchivePersonal(e) {
   var message = GmailApp.getMessageById(e.parameters.messageId);
   var thread = message.getThread();
@@ -37,11 +37,11 @@ function moveToArchivePersonal(e) {
   }
 
   thread.addLabel(label);
-  thread.moveToArchive(); // odebere INBOX (zůstane dohledatelné + má štítek)
+  thread.moveToArchive(); // removes INBOX (stays searchable + keeps the label)
 
   return CardService.newActionResponseBuilder()
     .setNotification(
-      CardService.newNotification().setText('Přesunuto do ' + TARGET_LABEL + ' ✓')
+      CardService.newNotification().setText('Moved to ' + TARGET_LABEL + ' ✓')
     )
     .build();
 }

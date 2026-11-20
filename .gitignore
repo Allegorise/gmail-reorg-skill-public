@@ -1,15 +1,15 @@
-# Nikdy necommitovat tajemství
+# Never commit secrets
 .env
 .env.*
 *.key
 *token*
 *secret*
 
-# Nástroje
+# Tooling
 node_modules/
 .DS_Store
 Thumbs.db
 
-# Dočasné
+# Temp
 scratchpad/
 *.log
