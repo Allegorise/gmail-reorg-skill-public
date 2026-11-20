@@ -5,6 +5,13 @@ stable categories by explicit rules — separating important mail from marketing
 and receipts, and keeping it that way with filters. Built from a real cleanup that took an
 inbox from **~21,000 to ~300** messages.
 
+## What it looks like
+
+![Gmail inbox sorted into category sections](docs/result.webp)
+
+*The inbox split into sections above the mailbox (IMPORTANT = starred, SECURITY, SHOPPING, READING, …)
+with the full label tree on the left. Message contents are blurred.*
+
 > ⚠️ **Anonymized example.** Specific personal addresses, names and company domains are replaced
 > with placeholders (`your-account`, `contact-lawyer`, `your-company`…). When you use it, fill in
 > your own sender lists and human whitelist.
