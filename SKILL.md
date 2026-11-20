@@ -132,7 +132,27 @@ EN + CS are given as a start; add the user's language. (Codes also get removeLab
 
 Order (highest wins): `2 Security → 1 Important → 4 Shopping → 6 Other → 3 Reading → 5 Junk`.
 Dedup = go top-down; on a message with multiple labels, **remove the lower** one (batchModify removeLabelIds).
-NOTE: this is one-off — new mail can get a double label again.
+This one-off pass is fine for existing mail. For **new** mail (several filters can match one message), keep it
+clean one of two ways — see §11.
+
+## 7a. Keeping categories clean on an ongoing basis (dual labels)
+
+**Option A — display dedup (simplest, no automation).** Make the Multiple Inboxes section queries
+*mutually exclusive*: every section excludes the labels of all higher-priority sections. The dual label
+stays on the message, but it shows in exactly one section. Example (priority Security > Important(starred) >
+Shopping > Other > Reading):
+- SECURITY (highest): `label:"2 Security/Codes" OR label:"2 Security/Alerts" OR label:"2 Security"`
+- IMPORTANT: `is:starred -label:"2 Security/Codes" -label:"2 Security/Alerts" -label:"2 Security"`
+- SHOPPING: `label:"4 Shopping" -label:"2 Security/Codes" -label:"2 Security/Alerts" -label:"2 Security" -is:starred`
+- OTHER: `(label:"6 Other/SaaS" OR label:"6 Other/Finance" OR label:"6 Other/Crypto" OR label:"6 Other/Government" OR label:"6 Other/Insurance") -label:"2 Security/Codes" -label:"2 Security/Alerts" -label:"2 Security" -is:starred -label:"4 Shopping"`
+- READING: `label:"3 Reading" -label:"2 Security/Codes" -label:"2 Security/Alerts" -label:"2 Security" -is:starred -label:"4 Shopping"`
+
+(`label:"6 Other"` doesn't include its sub-labels — list them with OR.)
+
+**Option B — scheduled label cleanup (Apps Script time trigger).** A tiny Google Apps Script running on a
+daily time-based trigger in the user's own account removes the lower label where a higher one is present
+(same logic as §7, top-down tiers). No server, no token. Set it with `ScriptApp.newTrigger('dedup')
+.timeBased().everyDays(1).create()`. Use this if you want the labels themselves cleaned (not just the view).
 
 ## 8. NEVER
 
