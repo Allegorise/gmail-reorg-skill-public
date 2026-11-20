@@ -154,6 +154,12 @@ daily time-based trigger in the user's own account removes the lower label where
 (same logic as §7, top-down tiers). No server, no token. Set it with `ScriptApp.newTrigger('dedup')
 .timeBased().everyDays(1).create()`. Use this if you want the labels themselves cleaned (not just the view).
 
+**Option C — external scheduler running the dedup script.** The same §7 dedup implemented as a script
+(e.g. the Node snippet used for the batch pass) run on a schedule from outside Gmail — a local scheduled
+task (Windows Task Scheduler / cron) that runs it nightly, or a cloud cron (cron-job.org, GitHub Actions)
+hitting a hosted endpoint. Needs the OAuth token available to that runner, so it only makes sense if you
+already run such infra. Otherwise prefer **B** (self-contained, no token to host).
+
 ## 8. NEVER
 
 - Don't touch the **accounting-forward filter** (forwards receipt/invoice/statement to the accountant).

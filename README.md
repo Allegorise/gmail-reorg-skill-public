@@ -79,6 +79,20 @@ Junk doesn't need a section (it's filed away by filters).
 panel (not the top toolbar) and does not close the open email after the action — a limitation of
 Apps Script add-ons.
 
+## Keeping categories clean (dual labels)
+
+When several filters match one email it can end up with two category labels (e.g. Security + Finance).
+Three ways to handle it:
+
+- **A — exclusive sections (simplest, no automation).** Make each Multiple Inboxes section exclude the
+  higher-priority labels, so each email shows in exactly one section (the labels themselves stay).
+  Ready-to-paste section queries are in [SKILL.md §7a](SKILL.md).
+- **B — scheduled Apps Script (recommended for real cleanup).** A daily time-triggered Apps Script in your
+  own Google account removes the lower label where a higher one is present. No server, no token.
+- **C — external scheduler.** Run the dedup script from a local scheduled task (Windows Task Scheduler /
+  cron) or a cloud cron (cron-job.org, GitHub Actions) hitting a hosted endpoint. Needs the OAuth token
+  available to the runner — only worth it if you already run that kind of infra; otherwise prefer **B**.
+
 ## Limitations / status
 
 - Priority (dual-label) dedup is one-off — new mail can get a double label again; re-run the
