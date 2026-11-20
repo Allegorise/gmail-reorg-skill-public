@@ -42,6 +42,8 @@ Even without API access the skill works as a **precise manual** for how to sort 
 Gmail → ⚙ → See all settings → **Inbox** tab → **Inbox type: Multiple Inboxes** → fill the sections
 (up to 5), then **Save Changes**:
 
+![Multiple Inboxes settings](docs/multiple-inboxes.png)
+
 | # | Search query | Section name |
 |---|---|---|
 | 1 | `is:starred` | ⭐ IMPORTANT |
