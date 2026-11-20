@@ -18,12 +18,15 @@ mail into labels 1–7. For general methodology and context see `BACKGROUND.md`.
 > **Anonymized:** addresses like `your-account@gmail.com`, `contact-lawyer@example.com`,
 > `your-company.cz` are placeholders — replace with the real mailbox's values.
 
-> **🌐 LANGUAGE SETUP — DO THIS FIRST.** Ask the user:
-> *"What language(s) is most of your incoming mail in?"*
-> Then localize the keyword patterns in §4 and §6 to that language (translate each concept into the
-> user's language and use those as the match terms). **Sender lists (§5) are language-independent** —
-> they don't change. The tables below give **English + Czech** as a starting point; add the user's
-> language's equivalents (and keep EN/CZ if the mailbox is mixed).
+> **⚙ SETUP — ASK FIRST (two questions):**
+> 1. *"What language(s) is most of your incoming mail in?"* → localize the keyword patterns in §4 and §6
+>    to that language (translate each concept and use those as the match terms). **Sender lists (§5) are
+>    language-independent** — they don't change. The tables below give **English + Czech** as a starting
+>    point; add the user's language (keep EN/CZ if the mailbox is mixed).
+> 2. *"How old should mail be before it's archived — moved out of the inbox into `7 Archive/…` only?"*
+>    e.g. **6m / 1y / 2y / 3y**. Use it as the `older_than:` threshold in §9 step 5.
+>
+> Defaults if unanswered: EN+CS keywords, archive older than **2 years**.
 
 ---
 
@@ -139,14 +142,15 @@ NOTE: this is one-off — new mail can get a double label again.
 
 ## 9. Procedure (batches)
 
-0. **Language:** ask the user *"What language is most of your incoming mail in?"* and localize the keyword
-   sets in §4 and §6 to it (sender lists in §5 don't change).
+0. **Setup (ask first):** (a) dominant mail language → localize §4/§6 keywords (sender lists §5 don't change);
+   (b) archive age threshold (6m/1y/2y/3y) → used in step 5.
 1. **Audit:** count the inbox, break down by `category:*`, by age, top senders (sample with a rate limiter ~14 req/s).
 2. **Labels** (scheme §2) — creating labels is safe.
 3. Per category (Security → Shopping → Reading → Junk → Other): measure + show a sample, then
    `batchModify` (add label, remove INBOX; for Codes also UNREAD) + create a **filter** (criteria + negatedQuery → action).
 4. **Priority/dedup** (§7).
-5. **Archive by age:** `in:inbox older_than:2y` → `7 Archive/Personal` (remove INBOX). Protect work/personal/government.
+5. **Archive by age:** `in:inbox older_than:<chosen>` → `7 Archive/Personal` (add label + remove INBOX; stays
+   searchable). `<chosen>` = the threshold from setup §0 (default `2y`). Protect work/personal/government.
 6. **Multiple Inboxes** (Gmail UI): sections IMPORTANT=`is:starred`, SECURITY=`label:"2 Security" OR /Codes OR /Alerts`,
    READING=`label:"3 Reading"`, SHOPPING=`label:"4 Shopping"`, JUNK=`label:"5 Junk"`, OTHER=`label:"6 Other"`.
 

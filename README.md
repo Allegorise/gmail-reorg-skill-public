@@ -30,9 +30,10 @@ with the full label tree on the left. Message contents are blurred.*
 1. Put **`SKILL.md`** in the agent's context (optionally also `BACKGROUND.md`).
 2. Give it **OAuth access** to the mailbox (a refresh token, scopes `gmail.modify` +
    `gmail.settings.basic`). The token is **not** in this repo — keep it outside it (see `.gitignore`).
-3. The agent **first asks what language most of your mail is in** and localizes the keyword rules to
-   it (the sender lists are language-independent). Then tell it what you want (audit / sort / "put this
-   email into Shopping"). It moves the existing mail per the rules and creates filters for future mail.
+3. The agent **first asks two things**: (a) what language most of your mail is in (to localize the
+   keyword rules — sender lists are language-independent), and (b) how old mail should be before it's
+   archived (6m / 1y / 2y / 3y). Then tell it what you want (audit / sort / "put this email into
+   Shopping"). It moves the existing mail per the rules and creates filters for future mail.
 
 ### B) As a reference playbook for any agent
 Even without API access the skill works as a **precise manual** for how to sort the mailbox
