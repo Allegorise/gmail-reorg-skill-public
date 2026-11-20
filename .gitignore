@@ -1,0 +1,15 @@
+# Nikdy necommitovat tajemství
+.env
+.env.*
+*.key
+*token*
+*secret*
+
+# Nástroje
+node_modules/
+.DS_Store
+Thumbs.db
+
+# Dočasné
+scratchpad/
+*.log
