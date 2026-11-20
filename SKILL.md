@@ -18,6 +18,13 @@ mail into labels 1–7. For general methodology and context see `BACKGROUND.md`.
 > **Anonymized:** addresses like `your-account@gmail.com`, `contact-lawyer@example.com`,
 > `your-company.cz` are placeholders — replace with the real mailbox's values.
 
+> **🌐 LANGUAGE SETUP — DO THIS FIRST.** Ask the user:
+> *"What language(s) is most of your incoming mail in?"*
+> Then localize the keyword patterns in §4 and §6 to that language (translate each concept into the
+> user's language and use those as the match terms). **Sender lists (§5) are language-independent** —
+> they don't change. The tables below give **English + Czech** as a starting point; add the user's
+> language's equivalents (and keep EN/CZ if the mailbox is mixed).
+
 ---
 
 ## 1. Access & mechanics
@@ -60,11 +67,13 @@ Personal freemail (gmail.com/seznam.cz/… from real people) = keep in inbox.
 
 ## 4. Urgent safety guard (stays in inbox even if it matches a category)
 
-```
-{reminder "overdue" "past due" "amount due" "payment failed" "k úhradě" "po splatnosti" splatnost}
-```
+Concept = *overdue / due / failed payment / reminder to pay*. Localize to the mailbox's language (§ Language setup).
+
+- **EN:** `{reminder overdue "past due" "amount due" "payment failed" "pay now"}`
+- **CS:** `{upomínka "po splatnosti" "k úhradě" neprošla splatnost}`
+
 NOTE: "action required" and "expires" do NOT belong in the guard (too broad). The user may override
-per-case (e.g. move a failed Stripe payment to Shopping) — follow their explicit choice.
+per-case (e.g. move a failed payment to Shopping) — follow their explicit choice.
 
 ## 5. Routing by SENDER (sender → category)
 
@@ -99,27 +108,22 @@ microsoft-noreply (Microsoft 365 invoices), stripe.com (invoice/past due/stateme
 **Security (by sender):** noreply-accounts@google.com → Alerts; account-update@amazon.* → Alerts;
 verify@x.com → Alerts; googlewallet-noreply@google.com, googlepay-noreply@google.com → Alerts.
 
-## 6. Routing by KEYWORD (when sender isn't enough)
+## 6. Routing by KEYWORD (localize to the mailbox's language — see Language setup)
 
-**2 Security/Codes** (+ removeLabelIds UNREAD): `{"verification code" "confirmation code" "login code"
-"security code" "one-time" OTP "authentication code" "2FA" passcode "your temporary"}` − negate
-`{receipt invoice order "order confirmation"}`.
+Each row is a **concept** with a target label. Use the keyword set for the user's language.
+EN + CS are given as a start; add the user's language. (Codes also get removeLabelIds `UNREAD`.)
 
-**2 Security/Alerts:** `{"new login" "new sign-in" "new device" "password changed" "password updated"
-"password reset" "reset your password" passkey "security alert" "suspicious activity" "sign-in attempt"
-"signed-in to your account" "account was recovered" "verify your email" "account has been linked"}`.
-
-**4 Shopping:** `{"your receipt" "receipt from" "order confirmation" "order number" "tax document"
-"your trip with" "order has shipped" invoice}` − urgent guard (§4). + "end of subscription" (multi-language).
-
-**5 Junk:** terms changes `{"terms of use" "terms of service" "terms and conditions" "updated terms"
-"terms update"}`; privacy `{"updating our Privacy Policy" "privacy policy update"}`; sign-ups
-`{"new user registered" "account created" "successfully registered" "your login"}`; surveys/reviews
-`{"how was your" "rate your" "waiting for your review" "leave a review" "your feedback"}`; commercial
-offers `{"commercial communication" "special offer" "exclusive offer"}` − negate `{"price quote" inquiry order invoice}`.
-
-**Protected exceptions (do NOT send to Junk):** `{"your appointment" "appointment reminder"
-"your reservation" "booking confirmation" reservation}`.
+| Concept | → Label | English keywords | Czech keywords |
+|---|---|---|---|
+| One-time / verification code | 2 Security/Codes | `"verification code" "confirmation code" "login code" "security code" "one-time" OTP "authentication code" "2FA" passcode` | `"ověřovací kód" "bezpečnostní kód" "jednorázový kód" "přihlašovací kód"` |
+| Login / account security alert | 2 Security/Alerts | `"new login" "new sign-in" "new device" "password changed" "password reset" "reset your password" passkey "security alert" "suspicious activity" "verify your email" "account was recovered" "account has been linked"` | `"nové přihlášení" "nové zařízení" "změna hesla" "reset hesla" "přístupový klíč" "bezpečnostní upozornění" "podezřelá aktivita" "ověřte svůj e-mail"` |
+| Receipt / order / tax document | 4 Shopping | `"your receipt" "order confirmation" "order number" "tax document" invoice "has shipped" "your trip with"` | `"potvrzení objednávky" "číslo objednávky" "daňový doklad" faktura stvrzenka "byla odeslána" "jízda s"` |
+| End of subscription | 4 Shopping | `"end of subscription" "subscription ending" "subscription cancellation"` | `"konec předplatného" "ukončení předplatného" "předplatné končí"` (SK `"koniec predplatného"`) |
+| Terms / policy change | 5 Junk | `"terms of use" "terms of service" "terms and conditions" "updated terms" "privacy policy update"` | `"obchodních podmínek" "smluvních podmínek" "změna podmínek" "zásady ochrany soukromí" "právních smluv"` |
+| New account registration | 5 Junk | `"account created" "new user registered" "successfully registered" "your login"` | `"nová registrace" "účet byl vytvořen" "byl zaregistrován nový uživatel" "přihlašovací jméno"` |
+| Survey / review request | 5 Junk | `"how was your" "rate your" "waiting for your review" "leave a review" "your feedback"` | `"Jaký byl Váš nákup" "Hodnocení objednávky" "jak jste byli spokojeni" "čekáme na vaše hodnocení"` |
+| Commercial offer | 5 Junk | `"commercial communication" "special offer" "exclusive offer"` − negate `{"price quote" inquiry order invoice}` | `"obchodní sdělení" "obchodní nabídka" "speciální nabídka"` − negace `{"cenová nabídka" poptávka objednávka faktura}` |
+| **Protected — do NOT junk** | *(keep)* | `"your appointment" "appointment reminder" "your reservation" "booking confirmation" reservation` | `"vaší návštěvy" "potvrzení rezervace" rezervace schůzka "připomínka návštěvy"` |
 
 ## 7. Priority (dual labels)
 
@@ -135,6 +139,8 @@ NOTE: this is one-off — new mail can get a double label again.
 
 ## 9. Procedure (batches)
 
+0. **Language:** ask the user *"What language is most of your incoming mail in?"* and localize the keyword
+   sets in §4 and §6 to it (sender lists in §5 don't change).
 1. **Audit:** count the inbox, break down by `category:*`, by age, top senders (sample with a rate limiter ~14 req/s).
 2. **Labels** (scheme §2) — creating labels is safe.
 3. Per category (Security → Shopping → Reading → Junk → Other): measure + show a sample, then

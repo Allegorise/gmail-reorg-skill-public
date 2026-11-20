@@ -23,8 +23,9 @@ inbox from **~21,000 to ~300** messages.
 1. Put **`SKILL.md`** in the agent's context (optionally also `BACKGROUND.md`).
 2. Give it **OAuth access** to the mailbox (a refresh token, scopes `gmail.modify` +
    `gmail.settings.basic`). The token is **not** in this repo — keep it outside it (see `.gitignore`).
-3. Tell the agent what you want (audit / sort / "put this email into Shopping"). It moves the
-   existing mail per the rules and creates filters for future mail.
+3. The agent **first asks what language most of your mail is in** and localizes the keyword rules to
+   it (the sender lists are language-independent). Then tell it what you want (audit / sort / "put this
+   email into Shopping"). It moves the existing mail per the rules and creates filters for future mail.
 
 ### B) As a reference playbook for any agent
 Even without API access the skill works as a **precise manual** for how to sort the mailbox
@@ -35,6 +36,23 @@ Even without API access the skill works as a **precise manual** for how to sort 
 1 Important (= star) · 2 Security (/Codes /Alerts) · 3 Reading · 4 Shopping · 5 Junk
 6 Other (/SaaS /Finance /Crypto /Government /Insurance) · 7 Archive (/Personal /Shopping …)
 ```
+
+### Multiple Inboxes setup (the view above the inbox)
+
+Gmail → ⚙ → See all settings → **Inbox** tab → **Inbox type: Multiple Inboxes** → fill the sections
+(up to 5), then **Save Changes**:
+
+| # | Search query | Section name |
+|---|---|---|
+| 1 | `is:starred` | ⭐ IMPORTANT |
+| 2 | `label:"2 Security/Codes" OR label:"2 Security/Alerts" OR label:"2 Security"` | 🔒 SECURITY |
+| 3 | `label:"4 Shopping"` | 🛒 SHOPPING |
+| 4 | `label:"3 Reading"` | 📚 READING |
+| 5 | `label:"6 Other"` | 🗂 OTHER |
+
+The main inbox underneath = everything not filed elsewhere. **IMPORTANT = `is:starred`** (star the mail
+you care about). Note: `label:"2 Security"` alone does **not** include its sub-labels — list them with `OR`.
+Junk doesn't need a section (it's filed away by filters).
 
 ## Safety principles (built into the skill)
 
